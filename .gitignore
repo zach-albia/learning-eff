@@ -1,0 +1,7 @@
+
+### Scala template
+.idea/*
+**/target/*
+*.class
+*.log
+
