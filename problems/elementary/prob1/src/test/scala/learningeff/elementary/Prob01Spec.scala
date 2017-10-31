@@ -2,6 +2,8 @@ package learningeff.elementary
 
 import org.scalatest._
 
+import org.atnos.eff.syntax.all._
+
 class Prob01Spec extends FlatSpec with Matchers {
 
   "our second pass at printHelloWorld" should
@@ -34,7 +36,7 @@ class Prob01Spec extends FlatSpec with Matchers {
     val exception = new Exception("Couldn't connect to Mars!")
     def println(s: String): Unit = throw exception // this matters
     def startTimeMillis: Long = 1 // these values
-    def endTimeMillis: Long = 2   // don't matter
+    def endTimeMillis:   Long = 2 // don't matter
   }
 
   "our sixth pass at printHelloWorld" should
@@ -48,12 +50,32 @@ class Prob01Spec extends FlatSpec with Matchers {
     result should be (Left(MockUnreachableRover.exception))
   }
 
-  "our seventh pass at printHelloWorld made with monad transformers" should
+  "our seventh pass monad transformers printHelloWorld" should
     "be a flexible, timed, resilient hello world program" in {
     val program = Prob01Pass07.printHelloWorld
 
     program.run(MockAppConfig).run should be (Right((2, ())))
 
     program.run(MockUnreachableRover).run should be (Left(MockUnreachableRover.exception))
+  }
+
+  "our eighth pass printHelloWorld Eff monad program" should
+    "be flexible, timed, and resilient" in {
+    val program = Prob01Pass08.printHelloWorld[Prob01Pass08.Stack]
+
+    val runningMock: AppConfig = MockAppConfig
+    val failingMock: AppConfig = MockUnreachableRover
+
+    program
+      .runReader(runningMock)
+      .runWriter
+      .runEither
+      .run should be (Right((), List("Ran hello world in 2 ms.")))
+
+    program
+      .runReader(failingMock)
+      .runWriter
+      .runEither
+      .run should be (Left(MockUnreachableRover.exception))
   }
 }
