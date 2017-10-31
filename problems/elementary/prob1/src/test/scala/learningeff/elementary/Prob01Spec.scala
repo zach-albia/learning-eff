@@ -19,7 +19,7 @@ class Prob01Spec extends FlatSpec with Matchers {
   object MockAppConfig extends AppConfig {
     def println(s: String): Unit = s should be ("Hello World")
     def startTimeMillis: Long = 1
-    def endTimeMillis: Long = 2
+    def endTimeMillis: Long = 3
   }
 
   "our fifth pass at printHelloWorld" should
@@ -27,14 +27,14 @@ class Prob01Spec extends FlatSpec with Matchers {
     val program = Prob01Pass05.printHelloWorld
 
     val (timeElapsed, _) = program.run(MockAppConfig).run
-    timeElapsed should be (1)
+    timeElapsed should be (2)
   }
 
-  object ThrowingAppConfig extends AppConfig {
+  object MockUnreachableRover extends AppConfig {
     val exception = new Exception("Couldn't connect to Mars!")
-    def println(s: String): Unit = throw exception
-    def startTimeMillis: Long = 1
-    def endTimeMillis: Long = 2
+    def println(s: String): Unit = throw exception // this matters
+    def startTimeMillis: Long = 1 // these values
+    def endTimeMillis: Long = 2   // don't matter
   }
 
   "our sixth pass at printHelloWorld" should
@@ -42,9 +42,18 @@ class Prob01Spec extends FlatSpec with Matchers {
     val program = Prob01Pass06.printHelloWorld
 
     val (timeElapsed, _) = program.run(MockAppConfig).run
-    timeElapsed should be (1)
+    timeElapsed should be (2)
 
-    val (_, result) = program.run(ThrowingAppConfig).run
-    result should be (Left(ThrowingAppConfig.exception))
+    val (_, result) = program.run(MockUnreachableRover).run
+    result should be (Left(MockUnreachableRover.exception))
+  }
+
+  "our seventh pass at printHelloWorld made with monad transformers" should
+    "be a flexible, timed, resilient hello world program" in {
+    val program = Prob01Pass07.printHelloWorld
+
+    program.run(MockAppConfig).run should be (Right((2, ())))
+
+    program.run(MockUnreachableRover).run should be (Left(MockUnreachableRover.exception))
   }
 }

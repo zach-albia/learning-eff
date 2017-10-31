@@ -1,6 +1,6 @@
 package learningeff.elementary
 
-import cats._, cats.data._, cats.implicits._
+import cats.data._, cats.implicits._
 import Writer._
 
 object Prob01Pass06 {
@@ -16,8 +16,10 @@ object Prob01Pass06 {
     }
   }
 
-  val printHelloWorld:
-    Reader[AppConfig, Writer[Long, Either[Throwable, Unit]]] =
+  type ReaderWriterEither[A] =
+    Reader[AppConfig, Writer[Long, Either[Throwable, A]]]
+
+  val printHelloWorld: ReaderWriterEither[Unit] =
     Reader { appCfg =>
       for {
         _ <- tell(-appCfg.startTimeMillis)
