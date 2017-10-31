@@ -7,7 +7,7 @@ scalaVersion := Settings.versions.scala
 val commonSettings = Seq(
   scalaVersion := Settings.versions.scala,
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "cats-core" % "1.0.0-MF",
+    "org.typelevel" %% "cats-core" % "0.9.0",
     "io.monix" %% "monix" % "2.3.0",
     "org.atnos" %% "eff" % "4.5.0",
     "org.atnos" %% "eff-monix" % "4.5.0",
